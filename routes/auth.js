@@ -62,6 +62,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
+//create admin-------------------------------------
 router.get('/createadmin', async (req, res) => {
   try {
     const user = new User({
@@ -77,4 +78,5 @@ router.get('/createadmin', async (req, res) => {
   }
 });
 
+//-------------------------------------------
 module.exports= router;

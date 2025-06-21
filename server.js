@@ -31,11 +31,11 @@ app.get('/api/config/paypal', (req, res) => {
   res.send( process.env.PAYPAL_CLIENT_ID);
 });
 
-/*app.use('/uploads', express.static(path.resolve(__dirname, '/uploads')));
+app.use('/uploads', express.static(path.resolve(__dirname, '/uploads')));
 app.use(express.static(path.resolve(__dirname, '/client/build')));
 app.get('*', (req, res) =>
   res.sendFile(path.resolve(__dirname, '/client/build/index.html'))
-);*/
+);
 
 //lunch the Server
 const port = process.env.PORT || 5001;
