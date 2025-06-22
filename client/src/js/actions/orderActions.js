@@ -12,9 +12,9 @@ const createOrder = (order) => async (dispatch, getState) => {
      /* headers: {
         Authorization: ' Bearer ' + userInfo.token
       }*/
-      headers: {
-        authorization: localStorage.getItem("token"),
-      },
+     headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: ORDER_CREATE_SUCCESS, payload: newOrder });
   } catch (error) {
@@ -29,9 +29,9 @@ const listMyOrders = () => async (dispatch, getState) => {
     const { data } = await Axios.get("/api/orders/mine", {
      /* headers:
         { Authorization: 'Bearer ' + userInfo.token }*/
-        headers: {
-            authorization: localStorage.getItem("token"),
-          },
+       headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: MY_ORDER_LIST_SUCCESS, payload: data })
   } catch (error) {
@@ -48,14 +48,17 @@ const listOrders = () => async (dispatch, getState) => {
      /* headers:
         { Authorization: 'Bearer ' + userInfo.token }*/
         headers: {
-            authorization: localStorage.getItem("token"),
-          },
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: ORDER_LIST_SUCCESS, payload: data })
   } catch (error) {
-    dispatch({ type: ORDER_LIST_FAIL, payload: error.message });
+    dispatch({
+      type: ORDER_LIST_FAIL,
+      payload: error.response?.data?.msg || error.message,
+    });
   }
-}
+};
 
 const detailsOrder = (orderId) => async (dispatch, getState) => {
   try {
@@ -65,8 +68,8 @@ const detailsOrder = (orderId) => async (dispatch, getState) => {
      /* headers:
         { Authorization: 'Bearer ' + userInfo.token }*/
         headers: {
-            authorization: localStorage.getItem("token"),
-          },
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data })
   } catch (error) {
@@ -81,9 +84,9 @@ const payOrder = (order, paymentResult) => async (dispatch, getState) => {
     const { data } = await Axios.put("/api/orders/" + order._id + "/pay", paymentResult, {
      /* headers:
         { Authorization: 'Bearer ' + userInfo.token }*/
-        headers: {
-            authorization: localStorage.getItem("token"),
-          },
+       headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: ORDER_PAY_SUCCESS, payload: data })
   } catch (error) {
@@ -98,9 +101,9 @@ const deleteOrder = (orderId) => async (dispatch, getState) => {
     const { data } = await Axios.delete("/api/orders/" + orderId, {
      /* headers:
         { Authorization: 'Bearer ' + userInfo.token }*/
-        headers: {
-            authorization: localStorage.getItem("token"),
-          },
+       headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
     });
     dispatch({ type: ORDER_DELETE_SUCCESS, payload: data })
   } catch (error) {

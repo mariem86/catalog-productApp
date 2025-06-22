@@ -53,9 +53,7 @@ import {
     }
   }
   
-  function orderListReducer(state = {
-    orders: []
-  }, action) {
+  function orderListReducer(state = { orders: [] }, action) {
     switch (action.type) {
       case ORDER_LIST_REQUEST:
         return { loading: true };

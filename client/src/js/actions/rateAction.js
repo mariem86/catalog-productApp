@@ -12,8 +12,8 @@ export const addrate = (id,newrate) => async (dispatch) => {
     try {
       const options = {
         headers: {
-          authorization: localStorage.getItem("token"),
-        },
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
       };
       const res = await axios.post(`/api/rate/${id}/addrate`, newrate,options);
      dispatch(getrate());
@@ -31,8 +31,8 @@ export const addrate = (id,newrate) => async (dispatch) => {
     try {
       const options = {
         headers: {
-          authorization: localStorage.getItem("token"),
-        },
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
       };
   
       const res = await axios.get("/api/rate/allrate",options);

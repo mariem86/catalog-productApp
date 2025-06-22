@@ -5,7 +5,7 @@ import CheckoutSteps from '../component/CheckoutSteps';
 import { createOrder } from '../js/actions/orderActions';
 function PlaceOrderScreen(props) {
 
-  const cart = useSelector(state => state.cartReducer);
+  const cart = useSelector(state => state.cart);
   const orderCreate = useSelector(state => state.orderCreateReducer);
   const { loading, success, error, order } = orderCreate;
 

@@ -1,57 +1,4 @@
-/*import React ,{useState, useEffect} from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
-import { listProducts } from '../js/actions/productAction';
 
-//import Rating from '../components/Rating';
-//import data from '../data';
-function HomeScreen(props) {
-  const productList = useSelector((state) => state.productListReducer);
-  const { products, loading, error } = productList;
- //const [products,setProduct]= useState([])
- const dispatch = useDispatch();
- useEffect(() => {
-   
-    dispatch(listProducts()); 
-  }, []);
-
-  return (
-    loading ? 
-      <div>Loading...</div>
-     : error ? 
-      <div>{error}</div>:
-    
-      <ul className="products">
-      {products.map((product) => (
-        <li key={product._id}>
-              <div className="product">
-              <Link to={'/product/' + product._id}>
-                  <img
-                    className="product-image"
-                    src="https://img.giglio.com/images/prodZoom/A82717.051_5.jpg"
-                    alt=""
-                  />
-                </Link>
-                <div className="product-name">
-                  <Link to={'/product/' + product._id}>{product.name}</Link>
-                </div>
-                <div className="product-brand">{product.brand}</div>
-                <div className="product-price">${product.price}</div>
-                
-                <div className="product-rating">
-                  
-                    {product.rating}  {product.numReviews + ' reviews'}</div>
-                    </div>
-              
-            </li>
-          ))}
-        </ul>
-    
-  )
- 
-}
-export default HomeScreen;*/
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -80,7 +27,7 @@ function HomeScreen(props) {
 },[])
 
 const rates=useSelector(state=>state.rateReducer.rates)
-  const rate=rates.filter(e=>e.product== products._id)
+  /*const rate=rates.filter(e=>e.product== products._id)
 
   let count =0 ;
     let sum =0;
@@ -91,7 +38,7 @@ const rates=useSelector(state=>state.rateReducer.rates)
         sum=sum+rate[i].rating
       }
     
-     moy=sum/count
+     moy=sum/count*/
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(listProducts(category, searchKeyword, sortOrder));
@@ -129,31 +76,39 @@ const rates=useSelector(state=>state.rateReducer.rates)
       ) : error ? (
         <div>{error}</div>
       ) : (
-        <ul className="products">
-          {products.map((product) => (
-            <li key={product._id}>
-              <div className="product">
-              <Link to={'/product/' + product._id}>
-                  <img
-                    className="product-image"
-                    src="https://img.giglio.com/images/prodZoom/A82717.051_5.jpg"
-                    alt=""
-                  />
-                </Link>
-                <div className="product-name">
-                  <Link to={'/product/' + product._id}>{product.name}</Link>
-                </div>
-                <div className="product-brand">{product.brand}</div>
-                <div className="product-price">${product.price}</div>
-                
-                <div className="product-rating">
-                 <span className="rating">Rating</span> <span className="number3"> <StarRatingComponent name ="t" value={moy}/></span> </div>
-                 
-               
-              </div>
-            </li>
-          ))}
-        </ul>
+       <ul className="products">
+  {products.map((product) => {
+    const productRates = rates.filter((e) => e.product === product._id);
+    const totalRating = productRates.reduce((acc, curr) => acc + curr.rating, 0);
+    const avgRating = productRates.length > 0 ? totalRating / productRates.length : 0;
+
+    return (
+      <li key={product._id}>
+        <div className="product">
+          <Link to={'/product/' + product._id}>
+            <img
+              className="product-image"
+              src={`/uploads/${product.image}`}
+              alt=""
+            />
+          </Link>
+          <div className="product-name">
+            <Link to={'/product/' + product._id}>{product.name}</Link>
+          </div>
+          <div className="product-brand">{product.brand}</div>
+          <div className="product-price">${product.price}</div>
+
+          <div className="product-rating">
+            <span className="rating">Rating</span>
+            <span className="number3">
+              <StarRatingComponent name="rating" value={avgRating} starCount={5} editing={false} />
+            </span>
+          </div>
+        </div>
+      </li>
+    );
+  })}
+</ul>
       )}
     </>
   );

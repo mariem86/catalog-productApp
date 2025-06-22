@@ -15,7 +15,7 @@ export default combineReducers({userSigninReducer,userRegisterReducer,productLis
   productSaveReducer,
   productDeleteReducer,
   productReviewSaveReducer,
-  cartReducer,orderCreateReducer, orderDetailsReducer,
+  cart: cartReducer,orderCreateReducer, orderDetailsReducer,
   orderPayReducer, myOrderListReducer, orderListReducer, orderDeleteReducer,
   rateReducer,userUpdateReducer
     

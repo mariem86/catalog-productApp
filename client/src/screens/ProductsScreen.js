@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+
 import {
   saveProduct,
   listProducts,
   deleteProdcut,
 } from '../js/actions/productAction';
+
+
 
 function ProductsScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,7 +19,7 @@ function ProductsScreen(props) {
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState('');
   const [description, setDescription] = useState('');
- const [uploading, setUploading] = useState(false);
+ 
   const productList = useSelector((state) => state.productListReducer);
   const { loading, products, error } = productList;
 
@@ -57,87 +59,32 @@ function ProductsScreen(props) {
     setCategory(product.category);
     setCountInStock(product.countInStock);
   };
-  const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(
-      saveProduct({
-        _id: id,
-        name,
-        price,
-        image,
-        brand,
-        category,
-        countInStock,
-        description,
-      })
-    );
-  };
+
+   /* onsubmit */
+ const submitHandler = (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append("_id", id);
+  formData.append("name", name);
+  formData.append("price", price);
+  formData.append("brand", brand);
+  formData.append("category", category);
+  formData.append("countInStock", countInStock);
+  formData.append("description", description);
+  if (image instanceof File) {
+    formData.append("image", image);
+  }
+
+  dispatch(saveProduct(formData));
+};
+
+ 
   const deleteHandler = (product) => {
     dispatch(deleteProdcut(product._id));
   };
- const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    const bodyFormData = new FormData();
-    bodyFormData.append('image', file);
-    setUploading(true);
-    try {
-      const { data } = await axios.post('/api/uploads', bodyFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          
-            authorization: localStorage.getItem("token"),
-          
-        },
-      });
-      setImage(data);
-      setUploading(false);
-    } catch (error) {
-      
-      console.log(error);
-    }
-  }; 
-  /*const [photo, setPhoto] = useState("");
-  const [list, setList] = useState([]);
-  const get = async () => {
-    try {
-      const res = await axios.get("/api/photos");
-      setList([...list, ...res.data]);
-    } catch (error) {
-      alert("Error get ");
-    }
-  };
-  const handleChange = e => {
-    const file = e.target.files[0];
-    setPhoto(file);
-    previewImage(e);
-  };
 
-  const previewImage = e => {
-    const file = e.target.files;
-    const reader = new FileReader();
-    reader.onload = e =>  setImage(e.target.result);
-
-    const blob = new Blob(file, { type: "application/octet-binary" });
-    console.log(blob);
-    reader.readAsDataURL(blob);
-  };
-
-  const uploadImg = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("photo", photo);
-      const res = await axios.post("/api/photos", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
-
-      setList([...list, res.data]);
-      setImage("");
-    } catch (err) {
-      console.log(err);
-    }
-  };*/
+  
+ 
  
   return (
     <div className="content content-margined">
@@ -181,14 +128,12 @@ function ProductsScreen(props) {
               </li>
               <li>
               <input
-                  type="text"
-                  name="image"
-                  value={image}
-                  id="image"
-                  onChange={(e) => setImage(e.target.value)}
+                 type="file"
+                 name="image"
+                 id="image"
+                 onChange={(e) => setImage(e.target.files[0])}
                 ></input>
-                <input type="file" onChange={uploadFileHandler}></input>
-                {uploading && <div>Uploading...</div>}
+               
               </li>
               
               <li>
@@ -256,6 +201,7 @@ function ProductsScreen(props) {
               <th>ID</th>
               <th>Name</th>
               <th>Price</th>
+              <th>image</th>
               <th>Category</th>
               <th>Brand</th>
               <th>Action</th>
@@ -267,6 +213,7 @@ function ProductsScreen(props) {
                 <td>{product._id}</td>
                 <td>{product.name}</td>
                 <td>{product.price}</td>
+                <td><img src={`/uploads/${product.image}`} alt=""/></td>
                 <td>{product.category}</td>
                 <td>{product.brand}</td>
                 <td>

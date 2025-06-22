@@ -1,9 +1,27 @@
 const express=require("express")
-
+const multer= require('multer')
 const { isAuth, isAdmin }=require('../middlewares/isAuth')
 const router=express.Router()
 const Product=require("../models/Product")
 const User=require("../models/User")
+
+//upload image with multer
+
+filename=""
+const mystorage=multer.diskStorage({
+    destination:'./uploads',
+    filename:(req,file,redirect)=>{
+       let  date= Date.now();
+        let fl=date +"."+ file.mimetype.split('/')[1];
+        //1257896655589.png
+        redirect(null,fl);
+        filename=fl;
+    }
+
+})
+
+const upload= multer({storage:mystorage})
+
 //sherch
 router.get('/', async (req, res) => {
     const category = req.query.category ? { category: req.query.category } : {};
@@ -68,26 +86,39 @@ router.get('/', async (req, res) => {
     }
   });
   //edit product
-  router.put('/:id', isAuth, isAdmin, async (req, res) => {
+ router.put('/:id', upload.single('image'), isAuth, isAdmin, async (req, res) => {
+  try {
     const productId = req.params.id;
     const product = await Product.findById(productId);
-    if (product) {
-      product.name = req.body.name;
-      product.price = req.body.price;
-      product.image = req.body.image;
-      product.brand = req.body.brand;
-      product.category = req.body.category;
-      product.countInStock = req.body.countInStock;
-      product.description = req.body.description;
-      const updatedProduct = await product.save();
-      if (updatedProduct) {
-        return res
-          .status(200)
-          .send({ message: 'Product Updated', data: updatedProduct });
-      }
+
+    if (!product) {
+      return res.status(404).send({ message: 'Product Not Found' });
     }
-    return res.status(500).send({ message: ' Error in Updating Product.' });
-  });
+
+    product.name = req.body.name;
+    product.price = req.body.price;
+
+    
+    if (req.file) {
+      product.image = req.file.filename;
+    } else if (req.body.image) {
+      
+      product.image = req.body.image;
+    }
+
+    product.brand = req.body.brand;
+    product.category = req.body.category;
+    product.countInStock = req.body.countInStock;
+    product.description = req.body.description;
+
+    const updatedProduct = await product.save();
+    res.status(200).send({ message: 'Product Updated', data: updatedProduct });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Error in Updating Product.' });
+  }
+});
+
   //delete product
   router.delete('/:id', isAuth, isAdmin, async (req, res) => {
     const deletedProduct = await Product.findById(req.params.id);
@@ -99,11 +130,11 @@ router.get('/', async (req, res) => {
     }
   });
   //create product
-  router.post('/add', isAuth, isAdmin, async (req, res) => {
+  router.post('/add',upload.single('image'), isAuth, isAdmin, async (req, res) => {
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
-      image: req.body.image,
+      image: req.file.filename,
       brand: req.body.brand,
       category: req.body.category,
       countInStock: req.body.countInStock,

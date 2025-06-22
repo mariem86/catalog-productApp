@@ -4,7 +4,7 @@ const connectDB = require("./config/connectDB");
 const path  = require('path');
 const authRouter = require("./routes/auth");
 const productRouter= require("./routes/product")
-const uploadRoute= require("./routes/uploadRoute")
+
 const orderRoute = require( './routes/order');
 const rateRouter = require("./routes/rate");
 require("dotenv").config({ path: "./config/.env" });
@@ -24,18 +24,14 @@ connectDB();
 //routes
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
-app.use('/api/uploads', uploadRoute);
+
 app.use('/api/orders', orderRoute);
 app.use("/api/rate", rateRouter);
 app.get('/api/config/paypal', (req, res) => {
   res.send( process.env.PAYPAL_CLIENT_ID);
 });
 
-app.use('/uploads', express.static(path.resolve(__dirname, '/uploads')));
-app.use(express.static(path.resolve(__dirname, '/client/build')));
-app.get('*', (req, res) =>
-  res.sendFile(path.resolve(__dirname, '/client/build/index.html'))
-);
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 //lunch the Server
 const port = process.env.PORT || 5001;

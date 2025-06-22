@@ -63,8 +63,8 @@ import {
           Authorization: 'Bearer ' + userInfo.token,
         }, */
           headers: {
-            authorization: localStorage.getItem("token"),
-          },
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
         });
         dispatch({ type: PRODUCT_SAVE_SUCCESS, payload: res.data });
       } else {
@@ -74,9 +74,9 @@ import {
           {/*headers: {
           Authorization: 'Bearer ' + userInfo.token,
         }, */
-            headers: {
-              authorization: localStorage.getItem("token"),
-            },
+           headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
           }
         );
         dispatch({ type: PRODUCT_SAVE_SUCCESS, payload: res.data });
@@ -95,24 +95,28 @@ import {
     }
   };
   
-  const deleteProdcut = (productId) => async (dispatch,/* getState*/) => {
-    try {
-     /* const {
-        userSigninReducer: { userInfo },
-      } = getState();*/
-      dispatch({ type: PRODUCT_DELETE_REQUEST, payload: productId });
-      const res = await axios.delete('/api/products' + productId, {
-        /*headers: {
-          Authorization: 'Bearer ' + userInfo.token,
-        }, */  headers: {
-          authorization: localStorage.getItem("token"),
-        },
-      });
-      dispatch({ type: PRODUCT_DELETE_SUCCESS, payload: res.data, success: true });
-    } catch (error) {
-      dispatch({ type: PRODUCT_DELETE_FAIL, payload: error.message });
-    }
-  };
+  const deleteProdcut = (productId) => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_DELETE_REQUEST, payload: productId });
+
+    const res = await axios.delete(`/api/products/${productId}`, {
+      headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
+    });
+
+    dispatch({
+      type: PRODUCT_DELETE_SUCCESS,
+      payload: res.data,
+      success: true,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_DELETE_FAIL,
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
   const saveProductReview = (productId, review) => async (dispatch, getState) => {
     try {
       /*const {
@@ -128,9 +132,9 @@ import {
          /* headers: {
             Authorization: 'Bearer ' + token,
           },*/
-          headers: {
-            authorization: localStorage.getItem("token"),
-          },
+         headers: {
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+}
         }
       );
       dispatch({ type: PRODUCT_REVIEW_SAVE_SUCCESS, payload: data });

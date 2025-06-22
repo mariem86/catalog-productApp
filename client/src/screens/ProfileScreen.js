@@ -17,9 +17,21 @@ function ProfileScreen(props) {
     props.history.push("/signin");
   }
   const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(update({ userId: userInfo._id, email, name, password }))
+  e.preventDefault();
+  const updatedUser = {
+    userId: userInfo._id,
+    email,
+    name,
+  };
+
+  // seulement si l’utilisateur veut changer son mot de passe
+  if (password.trim() !== '') {
+    updatedUser.password = password;
   }
+
+  dispatch(update(updatedUser));
+};
+
   const userUpdate = useSelector(state => state.userUpdateReducer);
   const { loading, success, error } = userUpdate;
 
@@ -28,9 +40,11 @@ function ProfileScreen(props) {
   useEffect(() => {
     if (userInfo) {
       console.log(userInfo.name)
-      setEmail(userInfo.email);
-      setName(userInfo.name);
-      setPassword(userInfo.password);
+      if (userInfo) {
+  setEmail(userInfo.email);
+  setName(userInfo.name);
+  setPassword('');
+}
     }
     dispatch(listMyOrders());
     return () => {

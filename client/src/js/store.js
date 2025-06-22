@@ -4,10 +4,15 @@ import Cookies from 'js-cookie'
 import rootReducer from "./reducers";
 
 
-//const userInfo =Cookies.get('userInfo')|| null;
-const cartItems = Cookies.get('cartItems') || [];
+const cartItemsFromStorage = localStorage.getItem('cartItems')
+  ? JSON.parse(localStorage.getItem('cartItems'))
+  : [];
 
-const initialState = {cart:{cartItems,shipping: {}, payment: {}}  }
+const initialState = {
+  cart: {
+    cartItems: cartItemsFromStorage,
+  },
+};
 const middleware = [thunk];
 const devtools =
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&

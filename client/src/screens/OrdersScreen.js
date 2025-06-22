@@ -13,6 +13,7 @@ function OrdersScreen(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+     console.log("Token in localStorage:", localStorage.getItem("token"));
     dispatch(listOrders());
     return () => {
       //
@@ -45,21 +46,29 @@ function OrdersScreen(props) {
             </tr>
           </thead>
           <tbody>
-            {orders.map(order => (<tr key={order._id}>
-              <td>{order._id}</td>
-              <td>{order.createdAt}</td>
-              <td>{order.totalPrice}</td>
-              <td>{order.user.name}</td>
-              <td>{order.isPaid.toString()}</td>
-              <td>{order.paidAt}</td>
-              <td>{order.isDelivered.toString()}</td>
-              <td>{order.deliveredAt}</td>
-              <td>
-                <Link to={"/order/" + order._id} className="button secondary" >Details</Link>
-                {' '}
-                <button type="button" onClick={() => deleteHandler(order)} className="button secondary">Delete</button>
-              </td>
-            </tr>))}
+          {Array.isArray(orders) && orders.length > 0 ? (
+  orders.map(order => (
+    <tr key={order._id}>
+      <td>{order._id}</td>
+      <td>{order.createdAt}</td>
+      <td>{order.totalPrice}</td>
+      <td>{order.user?.name || 'Utilisateur supprimé'}</td>
+      <td>{order.isPaid ? 'Oui' : 'Non'}</td>
+      <td>{order.paidAt ? order.paidAt : '-'}</td>
+      <td>{order.isDelivered ? 'Oui' : 'Non'}</td>
+      <td>{order.deliveredAt ? order.deliveredAt : '-'}</td>
+      <td>
+        <Link to={`/order/${order._id}`} className="button secondary">Details</Link>
+        {' '}
+        <button type="button" onClick={() => deleteHandler(order)} className="button secondary">Delete</button>
+      </td>
+    </tr>
+  ))
+) : (
+  <tr>
+    <td colSpan="9">Aucune commande trouvée.</td>
+  </tr>
+)}
           </tbody>
         </table>
 

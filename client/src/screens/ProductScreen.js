@@ -55,21 +55,37 @@ let count =0 ;
     const handleAddToCart = () => {
       props.history.push('/cart/' + props.match.params.id + '?qty=' + qty);
     };
+
+if (loading) {
+  return <div>Loading...</div>;
+}
+
+if (error) {
+  return <div>{error}</div>;
+}
+
+if (!product || !product.image) {
+  return <div>Product not found or image missing</div>;
+}
+
     return( 
         
         <div>
         <div className="back-to-result">
           <Link to="/">Back to result</Link>
         </div>
-        {loading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>{error} </div>
-      ) : (<>
-        <div className="details">
-        <div className="details-image">
-          <img  src="https://img.giglio.com/images/prodZoom/A82717.051_5.jpg" alt=""></img>
-        </div>
+      <div>
+    <div className="details-image">
+      <img
+        className="product-image"
+        src={
+          product.image.includes("/uploads/")
+            ? product.image
+            : `/uploads/${product.image}`
+        }
+        alt={product.name}
+      />
+    </div>
         <div className="details-info">
           <ul>
             <li>
@@ -171,8 +187,8 @@ let count =0 ;
           </li>
         </ul>
       </div>
-      </>
-      )}
+      
+     
          
            
       </div>
