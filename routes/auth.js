@@ -24,6 +24,27 @@ router.put('/:id', isAuth, async (req, res) => {
   }
 });
 
+/** @swagger
+ * /api/auth/signin:
+ *   post:
+ *     summary: Connexion utilisateur
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ */
+
 router.post('/signin', async (req, res) => {
   const signinUser = await User.findOne({
     email: req.body.email,
@@ -41,6 +62,30 @@ router.post('/signin', async (req, res) => {
     res.status(401).send({ message: 'Invalid Email or Password.' });
   }
 });
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Inscription utilisateur
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Inscription réussie
+ */
 
 router.post('/register', async (req, res) => {
   const user = new User({
@@ -66,7 +111,7 @@ router.post('/register', async (req, res) => {
 router.get('/createadmin', async (req, res) => {
   try {
     const user = new User({
-      name: 'Mariem',
+      name: 'admin',
       email: 'admin@test.com',
       password: '1234',
       isAdmin: true,

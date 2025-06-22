@@ -22,6 +22,44 @@ const mystorage=multer.diskStorage({
 
 const upload= multer({storage:mystorage})
 
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Produits
+ *   description: Gestion des produits
+ */
+
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Liste des produits (recherche/tri)
+ *     tags: [Produits]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filtrer par catégorie
+ *       - in: query
+ *         name: searchKeyword
+ *         schema:
+ *           type: string
+ *         description: Mot-clé de recherche
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [lowest, highest]
+ *         description: Trier par prix
+ *     responses:
+ *       200:
+ *         description: Liste des produits
+ */
+
+
 //sherch
 router.get('/', async (req, res) => {
     const category = req.query.category ? { category: req.query.category } : {};
@@ -44,6 +82,18 @@ router.get('/', async (req, res) => {
     res.send(products);
   });
 
+
+ /**
+ * @swagger
+ * /api/products/all:
+ *   get:
+ *     summary: Récupérer tous les produits
+ *     tags: [Produits]
+ *     responses:
+ *       200:
+ *         description: Succès
+ */
+
   //get product
   router.get('/all', async (req, res) => {
     const products = await Product.find();
@@ -53,6 +103,28 @@ router.get('/', async (req, res) => {
       res.status(404).send({ message: 'Products Not Found.' });
     }
   });
+
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   get:
+ *     summary: Détails d'un produit
+ *     tags: [Produits]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du produit
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Détails du produit
+ *       404:
+ *         description: Produit non trouvé
+ */
+
   //get productid
   router.get('/:id', async (req, res) => {
     const product = await Product.findOne({ _id: req.params.id });
@@ -62,6 +134,40 @@ router.get('/', async (req, res) => {
       res.status(404).send({ message: 'Product Not Found.' });
     }
   });
+
+  /**
+ * @swagger
+ * /api/products/{id}/reviews:
+ *   post:
+ *     summary: Ajouter un avis sur un produit
+ *     tags: [Produits]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du produit
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               rating:
+ *                 type: number
+ *               comment:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Avis ajouté
+ */
+
   //add review
   router.post('/:id/reviews', isAuth, async (req, res) => {
     const product = await Product.findById(req.params.id);
@@ -85,6 +191,47 @@ router.get('/', async (req, res) => {
       res.status(404).send({ message: 'Product Not Found' });
     }
   });
+  /**
+ * @swagger
+ * /api/products/{id}:
+ *   put:
+ *     summary: Modifier un produit
+ *     tags: [Produits]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du produit
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *               brand:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               countInStock:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Produit modifié
+ */
   //edit product
  router.put('/:id', upload.single('image'), isAuth, isAdmin, async (req, res) => {
   try {
@@ -119,6 +266,26 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *   delete:
+ *     summary: Supprimer un produit
+ *     tags: [Produits]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du produit
+ *     responses:
+ *       200:
+ *         description: Produit supprimé
+ */
+
   //delete product
   router.delete('/:id', isAuth, isAdmin, async (req, res) => {
     const deletedProduct = await Product.findById(req.params.id);
@@ -129,6 +296,46 @@ router.get('/', async (req, res) => {
       res.send('Error in Deletion.');
     }
   });
+
+
+  /**
+ * @swagger
+ * /api/products/add:
+ *   post:
+ *     summary: Créer un produit
+ *     tags: [Produits]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *               brand:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               countInStock:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               rating:
+ *                 type: number
+ *               numReviews:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Produit créé
+ */
   //create product
   router.post('/add',upload.single('image'), isAuth, isAdmin, async (req, res) => {
     const product = new Product({
