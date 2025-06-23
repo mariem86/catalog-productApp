@@ -49,7 +49,7 @@ Tester avec Postman via la collection fournie
 L’interface Swagger est disponible sur :
 
 
-http://localhost:5000/api-docs
+http://localhost:5001/api-docs
 Pour l’activer :
 
 Installer Swagger UI
