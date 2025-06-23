@@ -37,9 +37,9 @@ Remplir les variables avec tes informations locales
 nodemon server
 Le serveur tourne sur http://localhost:5001 par défaut.
  Utilisation
-Accès API : http://localhost:5000/api
+Accès API : http://localhost:5001/api
 
-Accès images : http://localhost:5000/uploads
+Accès images : http://localhost:5001/uploads
 
 Créer un utilisateur admin via /api/auth/createadmin
 
